@@ -1,0 +1,59 @@
+applications:
+  upsun-piwigo:
+    source:
+      root: "/"
+
+    type: "php:8.3"
+
+    relationships:
+      mariadb:
+
+    mounts:
+      "_data":
+        source: "storage"
+        source_path: "_data"
+      "local":
+        source: "storage"
+        source_path: "local"
+      "galleries":
+        source: "storage"
+        source_path: "galleries"
+      "plugins":
+        source: "storage"
+        source_path: "plugins"
+      "themes":
+        source: "storage"
+        source_path: "themes"
+      "upload":
+        source: "storage"
+        source_path: "upload"
+
+    web:
+      locations:
+        "/":
+          passthru: "/index.php"
+          root: ""
+
+
+    build:
+      flavor: none
+
+    hooks:
+      build: |
+        set -eux
+        echo 'I am a build step'
+
+      deploy: |
+        set -eux
+        echo 'Put your deploy command here'
+
+services:
+  mariadb:
+    type: mariadb:11.4
+
+routes:
+  "https://{default}/":
+    type: upstream
+    upstream: "upsun-piwigo:http"
+    cache:
+      enabled: false
